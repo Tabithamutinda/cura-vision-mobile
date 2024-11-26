@@ -14,7 +14,7 @@ class PrimaryButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double effectiveBorderRadius = borderRadius ?? 15.0;
+    double effectiveBorderRadius = borderRadius ?? 20.0;
     return SizedBox(
       height: 48,
       width: double.infinity,
