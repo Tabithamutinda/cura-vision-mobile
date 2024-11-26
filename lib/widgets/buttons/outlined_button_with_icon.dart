@@ -15,7 +15,7 @@ class OutlinedIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double effectiveBorderRadius = borderRadius ?? 15.0;
+    double effectiveBorderRadius = borderRadius ?? 20.0;
     return SizedBox(
       height: 48,
       width: double.infinity,
@@ -23,10 +23,11 @@ class OutlinedIconButton extends StatelessWidget {
 
         onPressed: action,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(Constants.appWhite),
+          backgroundColor: const Color(0XFFE7FBF5),
           foregroundColor: Color(Constants.appPrimaryColor),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(effectiveBorderRadius)),
+             
         ),
         icon: SvgPicture.asset("assets/images/camera.svg"),
         label: Text(
