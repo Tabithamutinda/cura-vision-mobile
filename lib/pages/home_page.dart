@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:cura_vision/controllers/diagonosis/diagnosis_controller.dart';
 import 'package:cura_vision/helpers/constants.dart';
+import 'package:cura_vision/helpers/widget_helper.dart';
+import 'package:cura_vision/pages/prediction_results_page.dart';
 import 'package:cura_vision/widgets/buttons/outlined_button_with_icon.dart';
 import 'package:cura_vision/widgets/buttons/primary_button_widget.dart';
 import 'package:cura_vision/widgets/textfields/form_label_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/instance_manager.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,21 +27,50 @@ class _HomepageState extends State<Homepage> {
   XFile? _uploadedImage; // To hold the uploaded image file
   final ImagePicker _picker = ImagePicker();
 
-  Future<void> _pickImage() async {
+  analyzeImage() async {
+    WidgetHelper.loadingDialog(
+        title: 'Please wait', message: 'Analysing image');
+    await diagnosisController.predictMalariaCell().then((value) {
+      Get.back();
+      if (!value) {
+        WidgetHelper.snackbar('Error', diagnosisController.errorMessage.value);
+      } else {
+        Get.to(() => const PredictionsResultPage());
+      }
+    });
+  }
+
+  analyzeTBImage() async {
+    WidgetHelper.loadingDialog(
+        title: 'Please wait', message: 'Analysing Xray');
+    await diagnosisController.predictTuberculosisXray().then((value) {
+      Get.back();
+      if (!value) {
+        WidgetHelper.snackbar('Error', diagnosisController.errorMessage.value);
+      } else {
+        Get.to(() => const PredictionsResultPage());
+      }
+    });
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
     final XFile? pickedImage = await _picker.pickImage(
-      source: ImageSource.gallery,
+      source: source,
       preferredCameraDevice: CameraDevice.rear,
-      imageQuality: 85, // Adjust for smaller file size if needed
+      imageQuality: 85,
     );
 
-    if (pickedImage != null && pickedImage.path.endsWith('.png')) {
+    if (pickedImage != null) {
       setState(() {
         _uploadedImage = pickedImage;
+        diagnosisController.selected.value = pickedImage.path;
       });
-    } else if (pickedImage != null) {
-      // Show an error if the selected file is not a PNG
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Only PNG images are allowed!')),
+        const SnackBar(content: Text('Image selected successfully!')),
+      );
+    } else if (pickedImage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Choose another image')),
       );
     }
   }
@@ -46,10 +78,10 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(Constants.appbackgroundColor),
+      backgroundColor: const Color(Constants.appWhite),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22),
+          padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -91,14 +123,15 @@ class _HomepageState extends State<Homepage> {
                   fillColor:
                       const Color(Constants.appFillColor).withOpacity(0.7),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide(
                       width: 1,
-                      color:  const Color(Constants.appFillColor).withOpacity(0.5),
+                      color:
+                          const Color(Constants.appFillColor).withOpacity(0.5),
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide(
                       width: 1,
                       color:
@@ -120,109 +153,103 @@ class _HomepageState extends State<Homepage> {
                 }).toList(),
                 onChanged: (value) {
                   diagnosisController.imageType.value = value!;
+                  _uploadedImage = XFile("");
+                  diagnosisController.selected.value = '';
                 },
               ),
-              Obx(
-                () => diagnosisController.imageType.value == 'Malaria'
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const SizedBox(
-                            height: 69,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    height: 69,
+                  ),
+                  GestureDetector(
+                    onTap: () => _pickImage(ImageSource.gallery),
+                    child: Container(
+                      height: 200,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: const Color(Constants.appPrimaryColor),
+                              width: 1),
+                          borderRadius:
+                              BorderRadius.circular(20), // Rounded corners
+                          color: const Color(Constants.appbackgroundColor)
+                              .withOpacity(0.4) // Light grey background
                           ),
-                          GestureDetector(
-                            onTap: _pickImage,
-                            child: Container(
-                              height: 200,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: const Color(
-                                          Constants.appPrimaryColor),
-                                      width: 1),
-                                  borderRadius: BorderRadius.circular(
-                                      15), // Rounded corners
-                                  color: const Color(Constants
-                                      .appWhite) // Light grey background
-                                  ),
-                              child: _uploadedImage == null
-                                  ? Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        SvgPicture.asset(
-                                            "assets/images/upload.svg"),
-                                        const SizedBox(height: 8),
-                                        const Text(
-                                          'Select Image',
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color:
-                                                  Color(Constants.appTextGrey)),
-                                        ),
-                                      ],
-                                    )
-                                  : ClipRRect(
-                                      borderRadius: BorderRadius.circular(15),
-                                      child: Image.file(
-                                        File(_uploadedImage!.path),
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                      ),
-                                    ),
+                      child: _uploadedImage == null
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset("assets/images/upload.svg"),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'Select Image',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Color(Constants.appTextGrey)),
+                                ),
+                              ],
+                            )
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Image.file(
+                                File(_uploadedImage!.path),
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 48,
+                  ),
+                  const Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: Color(
+                            Constants.appDividerColor,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'or',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Color(
+                              Constants.appBlack,
                             ),
                           ),
-                          const SizedBox(
-                            height: 48,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: Color(
+                            Constants.appDividerColor,
                           ),
-                          const Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(
-                                child: Divider(
-                                  color: Color(
-                                    Constants.appDividerColor,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'or',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Color(
-                                      Constants.appBlack,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Divider(
-                                  color: Color(
-                                    Constants.appDividerColor,
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 44,
-                          ),
-                          OutlinedIconButton(
-                            action: () {},
-                            buttonText: 'Open Camera & Take a Photo',
-                          ),
-                          const SizedBox(
-                            height: 44,
-                          ),
-                          PrimaryButtonWidget(
-                              action: () {}, buttonText: 'Review')
-                        ],
+                        ),
                       )
-                    : const SizedBox(),
-              )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 44,
+                  ),
+                  OutlinedIconButton(
+                    action: () => _pickImage(ImageSource.camera),
+                    buttonText: 'Open Camera & Take a Photo',
+                  ),
+                  const SizedBox(
+                    height: 100,
+                  ),
+                  PrimaryButtonWidget(
+                      action: analyzeImage, buttonText: 'Review')
+                ],
+              ),
             ],
           ),
         ),
