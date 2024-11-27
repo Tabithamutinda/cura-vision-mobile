@@ -1,5 +1,6 @@
 import 'package:cura_vision/helpers/constants.dart';
 import 'package:cura_vision/pages/home_page.dart';
+import 'package:cura_vision/pages/intro_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_state_manager/src/simple/get_responsive.dart';
@@ -23,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   init() async {
     await Future.delayed(const Duration(seconds: 3));
-    Get.to(() => const Homepage());
+    Get.to(() => const IntroScreen());
   }
 
   @override

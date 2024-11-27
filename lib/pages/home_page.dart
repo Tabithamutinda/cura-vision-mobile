@@ -40,8 +40,7 @@ class _HomepageState extends State<Homepage> {
   }
 
   analyzeTBImage() async {
-    WidgetHelper.loadingDialog(
-        title: 'Please wait', message: 'Analysing Xray');
+    WidgetHelper.loadingDialog(title: 'Please wait', message: 'Analysing Xray');
     await diagnosisController.predictTuberculosisXray().then((value) {
       Get.back();
       if (!value) {
@@ -156,197 +155,234 @@ class _HomepageState extends State<Homepage> {
                   diagnosisController.selected.value = '';
                 },
               ),
-              diagnosisController.imageType.value == 'Malaria' ?
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 69,
-                  ),
-                  GestureDetector(
-                    onTap: () => _pickImage(ImageSource.gallery),
-                    child: Obx(
-                      ()=> Container(
-                        height: 200,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: const Color(Constants.appPrimaryColor),
-                                width: 1),
-                            borderRadius:
-                                BorderRadius.circular(20), // Rounded corners
-                            color: const Color(Constants.appbackgroundColor)
-                                .withOpacity(0.4) // Light grey background
+              Obx(()=>diagnosisController.imageType.value.isEmpty
+                  ? const Column(
+                      children: [
+                        SizedBox(
+                          height: 100,
+                        ),
+                        Center(
+                          child: Text('Select image type to proceed'),
+                        ),
+                      ],
+                    )
+                  : diagnosisController.imageType.value == 'Malaria'
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              height: 69,
                             ),
-                        child: diagnosisController.uploadedImage.value == null
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset("assets/images/upload.svg"),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    'Select Image',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        color: Color(Constants.appTextGrey)),
-                                  ),
-                                ],
-                              )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(15),
-                                child: Image.file(
-                                  File(diagnosisController.uploadedImage.value!.path),
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: double.infinity,
+                            GestureDetector(
+                              onTap: () => _pickImage(ImageSource.gallery),
+                              child: Obx(
+                                () => Container(
+                                  height: 200,
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: const Color(
+                                              Constants.appPrimaryColor),
+                                          width: 1),
+                                      borderRadius: BorderRadius.circular(
+                                          20), // Rounded corners
+                                      color: const Color(
+                                              Constants.appbackgroundColor)
+                                          .withOpacity(
+                                              0.4) // Light grey background
+                                      ),
+                                  child: diagnosisController
+                                              .uploadedImage.value ==
+                                          null
+                                      ? Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(
+                                                "assets/images/upload.svg"),
+                                            const SizedBox(height: 8),
+                                            const Text(
+                                              'Select Image',
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Color(
+                                                      Constants.appTextGrey)),
+                                            ),
+                                          ],
+                                        )
+                                      : ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          child: Image.file(
+                                            File(diagnosisController
+                                                .uploadedImage.value!.path),
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                          ),
+                                        ),
                                 ),
                               ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 48,
-                  ),
-                  const Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                        child: Divider(
-                          color: Color(
-                            Constants.appDividerColor,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'or',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Color(
-                              Constants.appBlack,
                             ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          color: Color(
-                            Constants.appDividerColor,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 44,
-                  ),
-                  OutlinedIconButton(
-                    action: () => _pickImage(ImageSource.camera),
-                    buttonText: 'Open Camera & Take a Photo',
-                  ),
-                  const SizedBox(
-                    height: 100,
-                  ),
-                  PrimaryButtonWidget(
-                      action: 
-                      analyzeImage , buttonText: 'Review')
-                ],
-              ) : Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 69,
-                  ),
-                  GestureDetector(
-                    onTap: () => _pickImage(ImageSource.gallery),
-                    child: Container(
-                      height: 200,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: const Color(Constants.appPrimaryColor),
-                              width: 1),
-                          borderRadius:
-                              BorderRadius.circular(20), // Rounded corners
-                          color: const Color(Constants.appbackgroundColor)
-                              .withOpacity(0.4) // Light grey background
-                          ),
-                      child: diagnosisController.uploadedImage.value == null
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            const SizedBox(
+                              height: 48,
+                            ),
+                            const Row(
+                              mainAxisSize: MainAxisSize.max,
                               children: [
-                                SvgPicture.asset("assets/images/upload.svg"),
-                                const SizedBox(height: 8),
-                                const Text(
-                                  'Select Image',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      color: Color(Constants.appTextGrey)),
+                                Expanded(
+                                  child: Divider(
+                                    color: Color(
+                                      Constants.appDividerColor,
+                                    ),
+                                  ),
                                 ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'or',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Color(
+                                        Constants.appBlack,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: Color(
+                                      Constants.appDividerColor,
+                                    ),
+                                  ),
+                                )
                               ],
-                            )
-                          : ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: Image.file(
-                                File(diagnosisController.uploadedImage.value!.path),
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
+                            ),
+                            const SizedBox(
+                              height: 44,
+                            ),
+                            OutlinedIconButton(
+                              action: () => _pickImage(ImageSource.camera),
+                              buttonText: 'Open Camera & Take a Photo',
+                            ),
+                            const SizedBox(
+                              height: 100,
+                            ),
+                            PrimaryButtonWidget(
+                                action: analyzeImage, buttonText: 'Review')
+                          ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            const Text(
+                              '**Warning: This model is still under development and might give the wrong prediction**',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            GestureDetector(
+                              onTap: () => _pickImage(ImageSource.gallery),
+                              child: Container(
+                                height: 200,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: const Color(
+                                            Constants.appPrimaryColor),
+                                        width: 1),
+                                    borderRadius: BorderRadius.circular(
+                                        20), // Rounded corners
+                                    color: const Color(
+                                            Constants.appbackgroundColor)
+                                        .withOpacity(
+                                            0.4) // Light grey background
+                                    ),
+                                child: diagnosisController
+                                            .uploadedImage.value ==
+                                        null
+                                    ? Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                              "assets/images/upload.svg"),
+                                          const SizedBox(height: 8),
+                                          const Text(
+                                            'Select Image',
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Color(
+                                                    Constants.appTextGrey)),
+                                          ),
+                                        ],
+                                      )
+                                    : ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Image.file(
+                                          File(diagnosisController
+                                              .uploadedImage.value!.path),
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                        ),
+                                      ),
                               ),
                             ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 48,
-                  ),
-                  const Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                        child: Divider(
-                          color: Color(
-                            Constants.appDividerColor,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'or',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Color(
-                              Constants.appBlack,
+                            const SizedBox(
+                              height: 48,
                             ),
-                          ),
+                            const Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Expanded(
+                                  child: Divider(
+                                    color: Color(
+                                      Constants.appDividerColor,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'or',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Color(
+                                        Constants.appBlack,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: Color(
+                                      Constants.appDividerColor,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 44,
+                            ),
+                            OutlinedIconButton(
+                              action: () => _pickImage(ImageSource.camera),
+                              buttonText: 'Open Camera & Take a Photo',
+                            ),
+                            const SizedBox(
+                              height: 100,
+                            ),
+                            PrimaryButtonWidget(
+                                action: analyzeTBImage, buttonText: 'Review')
+                          ],
                         ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          color: Color(
-                            Constants.appDividerColor,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 44,
-                  ),
-                  OutlinedIconButton(
-                    action: () => _pickImage(ImageSource.camera),
-                    buttonText: 'Open Camera & Take a Photo',
-                  ),
-                  const SizedBox(
-                    height: 100,
-                  ),
-                  PrimaryButtonWidget(
-                      action:  analyzeTBImage, buttonText: 'Review')
-                ],
-              ),
-           
-            ],
+             ),
+              ],
           ),
         ),
       ),
