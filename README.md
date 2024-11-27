@@ -1,16 +1,7 @@
 # cura_vision
 
-A new Flutter project.
+AI-Powered Diagnostics: Enhancing Tuberculosis and Malaria Detection through Medical Imaging
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This project aims to develop an AI-powered solution for analyzing medical images to assist in the rapid and accurate diagnosis of tuberculosis and malaria. By leveraging advanced image analysis techniques, the project seeks to address the challenges of delayed and misdiagnosis, particularly in resource-limited settings where access to skilled healthcare professionals is scarce. The solution aims to enhance diagnostic efficiency and support public health initiatives to combat these significant infectious diseases.
