@@ -3,15 +3,18 @@ import 'package:cura_vision/models/prediction_response.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:dio/dio.dart' as Dio;
+import 'package:image_picker/image_picker.dart';
 
 class DiagnosisController extends GetxController {
   Rx<String> selected = "".obs;
   Rx<bool> isLoading = false.obs;
   Rx<PredictionResponse> predictionResponse = PredictionResponse().obs;
-  Rx<String> selectedModel = "resnet34".obs;
+  Rx<String> selectedModel = "simple_cnn".obs;
+  Rx<String> selectedTbModel = "simple_cnn_tb_model".obs;
   Rx<String> errorMessage = "".obs;
   Rx<bool> hasPredicted = false.obs;
   Rx<String> imageType = "".obs;
+  Rx<XFile?> uploadedImage = Rx<XFile?>(null);
 
   Future<bool> predictMalariaCell() async {
     predictionResponse.value = PredictionResponse();
@@ -63,7 +66,7 @@ class DiagnosisController extends GetxController {
       // Prepare the form data
       Dio.FormData formData = Dio.FormData.fromMap({
         "image": await Dio.MultipartFile.fromFile(selected.value, filename: selected.value),
-        "model": selectedModel.value,
+        "model": selectedTbModel.value,
       });
 
       // Send the request

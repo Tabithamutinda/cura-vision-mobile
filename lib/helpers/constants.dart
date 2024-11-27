@@ -7,7 +7,7 @@ class Constants {
   static const int appFillColor = 0XFFD9D9D9;
   static const int appDividerColor = 0XFFE9CDCD;
   static const int appbackgroundColor = 0XFFF5F3F3;
-  static const String ENDPOINT = "https://f79a-41-90-64-84.ngrok-free.app"; 
+  static const String ENDPOINT = "https://03cd-105-163-156-167.ngrok-free.app"; 
   static const int appDarkGrey = 0XFF1E1E1E69;
   static const int appOrange = 0XFFF4A261;
 }
